@@ -30,6 +30,18 @@ app.get("/request", function(req, res) {
 	});
 });
 
+app.get("/request/:number", function(req, res) {
+	console.log("Request GET with number");
+	connection.query('SELECT * from requests WHERE phone = \"' + req.param('number') + "\"", function(err, rows, fields) {
+		res.send(rows);
+		if (!err) {
+			console.log('The solution is: ', rows);
+		} else {
+			console.log('Error while performing Query.');
+		}
+	});
+});
+
 app.post('/request', function (req, res) {
 	if (req.is('JSON')) {
       console.log("JSON Message");
