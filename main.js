@@ -46,8 +46,10 @@ app.post('/request', function (req, res) {
 	if (req.is('JSON')) {
       console.log("JSON Message");
       var message = req.body;
-
-      connection.query('INSERT INTO requests (name, phone, lat, lng) VALUES (\'' + message.name + '\', ' + message.phone + ', ' + message.lat + ', ' + message.lng + ')', function(err,res2){
+	  var query = 'INSERT INTO requests (name, phone, lat, lng, descr, category, numpeople, timeestimate) VALUES (\'' + message.name + '\', ' + message.phone + ', ' + message.lat + ', ' + message.lng + ', \'' + message.desc + '\', \'' + message.category + '\', ' + message.numpeople + ', ' + message.timeestimate + ')';
+	  
+	  console.log(query);
+      connection.query(query, function(err,res2){
         if(err) throw err;
         res.end();
         console.log("Saved " + message.phone + " request for help");
