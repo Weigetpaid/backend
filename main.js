@@ -7,23 +7,43 @@ var connection = mysql.createConnection({
   database : 'crikeydb'
 });
 var app = express();
+var bodyParser = require('body-parser');
+app.use( bodyParser.json() );
 
 connection.connect(function(err){
-if(!err) {
-    console.log("Database is connected ...\n");
-} else {
-    console.log("Error connecting database ...\n");
-}
+	if(!err) {
+	    console.log("Database is connected ...\n");
+	} else {
+	    console.log("Error connecting database ...\n");
+	}
 });
 
-app.get("/",function(req,res){
-connection.query('SELECT * from requests', function(err, rows, fields) {
-connection.end();
-  if (!err)
-    console.log('The solution is: ', rows);
-  else
-    console.log('Error while performing Query.');
-  });
+app.get("/request", function(req, res) {
+	console.log("Request GET");
+	connection.query('SELECT * from requests', function(err, rows, fields) {
+		res.send(rows);
+		if (!err) {
+			console.log('The solution is: ', rows);
+		} else {
+			console.log('Error while performing Query.');
+		}
+	});
 });
 
-app.listen(3000);
+app.post('/request', function (req, res) {
+	if (req.is('JSON')) {
+      console.log("JSON Message");
+      var message = req.body;
+
+      connection.query('INSERT INTO requests (name, phone, lat, lng) VALUES (\'' + message.name + '\', ' + message.phone + ', ' + message.lat + ', ' + message.lng + ')', function(err,res2){
+        if(err) throw err;
+        res.end();
+        console.log("Saved " + message.phone + " request for help");
+      });
+    } else {
+	    console.log("NOT JSON");
+	    console.log(req.body);
+    }
+});
+
+app.listen(4000);
